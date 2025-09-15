@@ -31,6 +31,8 @@ Other flags:
 - `--listen-port`: Port to listen on (default: 8080)
 - `--debug`: Enable debug logging (optional)
 
+Then go to https://localhost:8080 and you should see it working.
+
 ## Running with Docker
 
 A minimal Docker image is provided. The entrypoint script converts environment variables to CLI flags.
@@ -48,6 +50,8 @@ docker run --rm \
   -p 8080:8080 \
   digest-auth-removal-proxy
 ```
+
+Then go to https://localhost:8080 and you should see it working.
 
 - All CLI flags can be set via environment variables:
   - `DIGEST_AUTH_REMOVAL_PROXY_USERNAME`
