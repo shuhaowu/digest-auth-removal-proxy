@@ -31,5 +31,5 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/digest-auth-removal-proxy:latest
-            ghcr.io/${{ github.repository }}/digest-auth-removal-proxy:${{ github.sha }}
+            ghcr.io/${{ github.repository }}:v1
+            ghcr.io/${{ github.repository }}:${{ github.sha }}

@@ -13,6 +13,8 @@ COPY --from=builder /src/digest-auth-removal-proxy /usr/local/bin/digest-auth-re
 # Entrypoint script
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
+LABEL org.opencontainers.image.source=https://github.com/shuhaowu/digest-auth-removal-proxy
+
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD []
 
