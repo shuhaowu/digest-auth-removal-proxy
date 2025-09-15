@@ -5,6 +5,23 @@ This project provides a reverse proxy that transparently removes HTTP Digest Aut
 **Security Warning:**
 This proxy removes authentication from the backend. You should use it only in trusted environments or in conjunction with another authentication layer (such with auth request based SSO on nginx). Running this proxy without additional authentication exposes your backend to anyone who can reach the proxy.
 
+## Running with GitHub Container Registry (GHCR)
+
+A pre-built container image is available at [ghcr.io/shuhaowu/digest-auth-removal-proxy:v1](https://github.com/shuhaowu/digest-auth-removal-proxy/pkgs/container/digest-auth-removal-proxy). It works the same as the locally built Docker image documented below.
+
+### Example
+
+```sh
+docker pull ghcr.io/shuhaowu/digest-auth-removal-proxy:v1
+
+docker run \
+  -e DIGEST_AUTH_REMOVAL_PROXY_USERNAME=<username> \
+  -e DIGEST_AUTH_REMOVAL_PROXY_PASSWORD=<password> \
+  -e DIGEST_AUTH_REMOVAL_PROXY_BACKEND=http://prusalink-coreone \
+  -p 8080:8080 \
+  ghcr.io/shuhaowu/digest-auth-removal-proxy:v1
+```
+
 ## Building and Running (Bare Metal)
 
 ### Build
@@ -41,9 +58,9 @@ A minimal Docker image is provided. The entrypoint script converts environment v
 
 ```sh
 docker run --rm \
-  -e DIGEST_AUTH_REMOVAL_PROXY_USERNAME=<digest-username> \
-  -e DIGEST_AUTH_REMOVAL_PROXY_PASSWORD=<digest-password> \
-  -e DIGEST_AUTH_REMOVAL_PROXY_BACKEND=http://prusalink-coreone:80 \
+  -e DIGEST_AUTH_REMOVAL_PROXY_USERNAME=<username> \
+  -e DIGEST_AUTH_REMOVAL_PROXY_PASSWORD=<password> \
+  -e DIGEST_AUTH_REMOVAL_PROXY_BACKEND=http://prusalink-coreone \
   -e DIGEST_AUTH_REMOVAL_PROXY_LISTEN_HOST=0.0.0.0 \
   -e DIGEST_AUTH_REMOVAL_PROXY_LISTEN_PORT=8080 \
   -e DIGEST_AUTH_REMOVAL_PROXY_DEBUG=1 \
