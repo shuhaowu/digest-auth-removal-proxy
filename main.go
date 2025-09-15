@@ -14,17 +14,25 @@ import (
 )
 
 func main() {
-	// Setup slog debug logger
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
-
 	// 1. Parse command-line arguments
 	username := flag.String("username", "", "Digest Auth Username")
 	password := flag.String("password", "", "Digest Auth Password")
 	backendURLStr := flag.String("backend", "", "Backend URL (e.g., http://backend-server:8080)")
+	listenHost := flag.String("listen-host", "", "Host to listen on (default: all interfaces)")
+	listenPort := flag.String("listen-port", "8080", "Port to listen on (default: 8080)")
+	debug := flag.Bool("debug", false, "Enable debug logging")
 	flag.Parse()
 
+	var logLevel slog.Level
+	if *debug {
+		logLevel = slog.LevelDebug
+	} else {
+		logLevel = slog.LevelInfo
+	}
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: logLevel}))
+
 	if *username == "" || *password == "" || *backendURLStr == "" {
-		fmt.Println("Usage: digest-auth-removal-proxy --username <user> --password <pass> --backend <url>")
+		fmt.Fprintln(os.Stderr, "usage: digest-auth-removal-proxy -username <user> -password <pass> -backend <url>")
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
@@ -73,12 +81,11 @@ func main() {
 		reverseProxy.ServeHTTP(w, r)
 	})
 
-	// 6. Start the HTTP server on port 8080
-	logger.Debug("Starting reverse proxy", "addr", ":8080")
-	logger.Debug("Backend", "url", backendURL.String())
-	logger.Debug("Username for Digest Auth", "username", *username)
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		logger.Debug("Server failed to start", "error", err)
+	// 6. Start the HTTP server on configurable host and port
+	listenAddr := fmt.Sprintf("%s:%s", *listenHost, *listenPort)
+	logger.Info("Starting reverse proxy", "addr", listenAddr, "backend", backendURL.String(), "username", *username)
+	if err := http.ListenAndServe(listenAddr, nil); err != nil {
+		logger.Error("Server failed to start", "error", err)
 		os.Exit(1)
 	}
 }
